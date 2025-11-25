@@ -126,10 +126,40 @@ Per verificare la connessione ho compilato e avviato il sample `echo_server` for
   - Problema di compatibilità tra Zephyr e il modello Ethernet di Renode
 
 ---
+## OCRE 
+OCRE (Open Container Runtime for Embedded) è un container runtime ultra-lightweight progettato per dispositivi embedded, basato su Zephyr RTOS ed eseguito tramite WAMR (WebAssembly Micro Runtime).
+
+L’obiettivo è fornire un livello di isolamento e portabilità delle applicazioni tramite moduli WebAssembly (Wasm), mantenendo footprint minimo e compatibilità con sistemi a risorse limitate.
+
+### Architettura OCRE
+
+| Layer                | Descrizione                                                |
+| -------------------- | ---------------------------------------------------------- |
+| **Zephyr RTOS**      | Sistema operativo real-time utilizzato come base           |
+| **WAMR**             | Runtime Wasm integrato dentro Zephyr                       |
+| **OCRE Runtime**     | Gestisce caricamento, esecuzione, isolamento del modulo    |
+| **Applicativo Wasm** | Container/payload compilato verso `wasm32-unknown-unknown` |
+
+### Funzionamento 
+1 - Compili un modulo wasm tramite linguaggio C/Rust/Go
+2 - Il file .wasm viene passato al build system di OCRE (es. via build.sh).
+
+3 - OCRE converte il .wasm in un array C e lo embedda direttamente nel firmware Zephyr.
+
+4- All’avvio del dispositivo:
+
+- Zephyr inizializza il sistema
+
+- OCRE attiva WAMR
+
+- Il modulo Wasm viene caricato come container unico
+
+- Viene eseguito in sandbox
+
+---
+
 
 ## Creazione e deploy di un OCRE container su OCRE runtime
-
-Prima di aggiungere il supporto per la mia scheda RISC-V (non ancora supportata da OCRE), ho provato ad aggiungere dei moduli **WASM** al runtime OCRE e farli eseguire su **native_sim**, poiché è già supportata da OCRE e non richiede né emulazione né una scheda fisica da flashare.
 
 Ho seguito la guida ufficiale “Your first app” disponibile sul sito OCRE:  
 [OCRE Quickstart – Your first app](https://docs.project-ocre.org/quickstart/first-app/)
