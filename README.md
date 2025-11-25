@@ -133,12 +133,12 @@ L’obiettivo è fornire un livello di isolamento e portabilità delle applicazi
 
 ### Architettura OCRE
 
-| Layer                | Descrizione                                                |
-| -------------------- | ---------------------------------------------------------- |
-| **Zephyr RTOS**      | Sistema operativo real-time utilizzato come base           |
-| **WAMR**             | Runtime Wasm integrato dentro Zephyr                       |
-| **OCRE Runtime**     | Gestisce caricamento, esecuzione, isolamento del modulo    |
-| **Applicativo Wasm** | Container/payload compilato verso `wasm32-unknown-unknown` |
+| Layer                | Descrizione                                                                 |
+|---------------------|-------------------------------------------------------------------------------|
+| **Zephyr RTOS**      | Sistema operativo real-time utilizzato come base                             |
+| **WAMR**             | Runtime Wasm integrato dentro Zephyr                                         |
+| **OCRE Runtime**     | Gestisce caricamento, inizializzazione e ciclo di vita del modulo Wasm       |
+| **Applicativo Wasm** | Payload compilato verso `wasm32-unknown-unknown` o `wasm32-wasi` (se supportato) |
 
 ### Funzionamento 
 1 - Compili un modulo wasm tramite linguaggio C/Rust/Go.
