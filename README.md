@@ -141,12 +141,13 @@ L’obiettivo è fornire un livello di isolamento e portabilità delle applicazi
 | **Applicativo Wasm** | Container/payload compilato verso `wasm32-unknown-unknown` |
 
 ### Funzionamento 
-1 - Compili un modulo wasm tramite linguaggio C/Rust/Go
+1 - Compili un modulo wasm tramite linguaggio C/Rust/Go.
+
 2 - Il file .wasm viene passato al build system di OCRE (es. via build.sh).
 
 3 - OCRE converte il .wasm in un array C e lo embedda direttamente nel firmware Zephyr.
 
-4- All’avvio del dispositivo:
+4 - All’avvio del dispositivo:
 
 - Zephyr inizializza il sistema
 
@@ -156,25 +157,44 @@ L’obiettivo è fornire un livello di isolamento e portabilità delle applicazi
 
 - Viene eseguito in sandbox
 
----
 
-
-## Creazione e deploy di un OCRE container su OCRE runtime
+### Creazione e deploy di un OCRE container su OCRE runtime
 
 Ho seguito la guida ufficiale “Your first app” disponibile sul sito OCRE:  
 [OCRE Quickstart – Your first app](https://docs.project-ocre.org/quickstart/first-app/)
 
-Questa guida spiega come creare container OCRE utilizzando **Visual Studio Code**, **Docker** e l’estensione **Dev Containers**.  
+Questa guida spiega come creare un container OCRE utilizzando **Visual Studio Code**, **Docker** e l’estensione **Dev Containers**.  
 Seguendola, ho creato con successo il modulo WebAssembly `hello_world.wasm`, che viene usato da OCRE CLI per creare un OCRE container.  
 
 Tuttavia, la guida si interrompe proprio qui, con nessuna spiegazione su come creare un OCRE container, ne su come deployarlo su un qualsiasi dispositivo simulato o non.
 ![Screenshot della guida ufficiale di OCRE](OCRE_guide.png)
 
-Facendo alcune ricerche OCRE CLI "ufficiale" non è ancora pubblica ( è in roadmap ), oggi il flusso consigliato usa ORAS/OCI per creare e distribuire l'immagine che poi OCRE esegue sul nostro dispositivo.
-Nel repository ufficiale di OCRE, viene presentato lo script build.sh, che serve per automatizzare la creazione del container OCRE a partire dal modulo applicativo ( modulo wasm ), più i metadati necessari.
+Facendo alcune ricerche, la containerizzazione OCI è prevista, ma non ancora completa a livello tooling nativo ( è in roadmap ).
+Nel repository ufficiale di OCRE, viene presentato lo script build.sh, che serve in parole semplici a "dare in pasto un modulo wasm e farlo eseguire da Zephyr". Quindi Ocre con qeusto file non costruisce un’immagine container secondo lo spec Ocre/OCI (manifest.json, config, blobs/sha256, ecc.), ma builda il modulo wasm come payload del container.
 
-In pratica questo script, prende il modulo wasm, genera il config JSON, impacchetta il tutto come immagine OCI e la registra localmente o su un registro.
 
+
+Vediamo nello specifico cosa fa build.sh su Zephyr (tutte le porve sono fatte su native_sim) 
+
+1 - Prende il primo file .wasm passato come input
+
+2 - Lo converte in un array C (blob binario)
+
+3 - Lo include nel firmware come costante (.rodata)
+
+4 - Lo linka dentro zephyr.exe / zephyr.elf
+
+5 - A runtime:
+
+- Zephyr avvia il sistema
+
+- OCRE avvia WAMR
+
+- OCRE passa il blob wasm a WAMR
+
+- Il modulo Wasm viene istanziato ed eseguito in sandbox
+
+### Come lanciare il file build.sh
 Questo script permette di compilare e lanciare OCRE per **Zephyr** o **Linux** con diverse opzioni:
 
 - -t <target> : Required. z = Zephyr, l = Linux
@@ -191,7 +211,7 @@ Inizialmente ho provato per target Linux:
 Il file viene buildato e compilato senza nessun problema, mostrando anche l'output del modulo wasm
 ![Screenshot della guida ufficiale di OCRE](output_linux.png)
 
-Successivmaente, ho provato ad eseguire il target Zephyr ( quello che interessa a noi ):
+Successivmaente, ho provato ad eseguire il target Zephyr ( quello da noi interessato ):
 
 ```bash
 ./build.sh -t l -r -f /home/tindaro/getting-started/samples/sensor_polling/build/sensor_polling.wasm
@@ -217,7 +237,22 @@ Per risolvere basta sostiuire questo comando con il nuovo comando:
 COMMAND xxd -i ${OCRE_INPUT_FILE} | sed 's/unsigned char .*\\[/static const unsigned char wasm_binary[/' | sed 's/unsigned int .*_len/static const unsigned int wasm_binary_len/' > ${CMAKE_CURRENT_LIST_DIR}/src/ocre/ocre_input_file.g
 ```
 
+### Limitazioni attuali
 
+- Non supporta ancora più container simultanei
+- Nessun supporto nativo completo per immagini OCI containerizzate
+- Il deployment avviene solo tramite compilazione del firmware
+- Funziona correttamente in `native_sim` per test del modulo Wasm
+
+
+### Riferimenti
+
+- Articolo ufficiale: *A tiny open-source container runtime for embedded systems*  
+  https://zephyrproject.org/ocre-a-tiny-open-source-container-runtime-for-embedded-systems/
+  
+
+- Zephyr RTOS: https://zephyrproject.org  
+- OCRE docs: https://docs.project-ocre.org  
 
 ---
 
