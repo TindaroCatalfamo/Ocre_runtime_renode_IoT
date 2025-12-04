@@ -170,7 +170,7 @@ Tuttavia, la guida si interrompe proprio qui, con nessuna spiegazione su come cr
 ![Screenshot della guida ufficiale di OCRE](OCRE_guide.png)
 
 Facendo alcune ricerche, la containerizzazione OCI è prevista, ma non ancora completa a livello tooling nativo ( è in roadmap ).
-Nel repository ufficiale di OCRE, viene presentato lo script build.sh, che serve in parole semplici a "dare in pasto un modulo wasm e farlo eseguire da Zephyr". Quindi Ocre con qeusto file non costruisce un’immagine container secondo lo spec Ocre/OCI (manifest.json, config, blobs/sha256, ecc.), ma builda il modulo wasm come payload del container.
+Nel repository ufficiale di OCRE, viene presentato lo script build.sh, che serve in parole semplici a "dare in pasto un modulo wasm e farlo eseguire da Zephyr". Quindi Ocre con questo file non costruisce un’immagine container secondo lo spec Ocre/OCI (manifest.json, config, blobs/sha256, ecc.), ma builda il modulo wasm come payload del container.
 
 
 
@@ -208,6 +208,7 @@ Inizialmente ho provato per target Linux:
 ```bash
 ./build.sh -t l -r -f /home/tindaro/getting-started/samples/sensor_polling/build/sensor_polling.wasm
 ```
+
 Il file viene buildato e compilato senza nessun problema, mostrando anche l'output del modulo wasm
 ![Screenshot della guida ufficiale di OCRE](output_linux.png)
 
