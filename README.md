@@ -167,7 +167,7 @@ Questa guida spiega come creare un container OCRE utilizzando **Visual Studio Co
 Seguendola, ho creato con successo il modulo WebAssembly `hello_world.wasm`, che viene usato da OCRE CLI per creare un OCRE container.  
 
 Tuttavia, la guida si interrompe proprio qui, con nessuna spiegazione su come creare un OCRE container, ne su come deployarlo su un qualsiasi dispositivo simulato o non.
-![Screenshot della guida ufficiale di OCRE](OCRE_guide.png)
+![Screenshot della guida ufficiale di OCRE](images/OCRE_guide.png)
 
 Facendo alcune ricerche, la containerizzazione OCI è prevista, ma non ancora completa a livello tooling nativo ( è in roadmap ).
 Nel repository ufficiale di OCRE, viene presentato lo script build.sh, che serve in parole semplici a "dare in pasto un modulo wasm e farlo eseguire da Zephyr". Quindi Ocre con questo file non costruisce un’immagine container secondo lo spec Ocre/OCI (manifest.json, config, blobs/sha256, ecc.), ma builda il modulo wasm come payload del container.
@@ -210,7 +210,7 @@ Inizialmente ho provato per target Linux:
 ```
 
 Il file viene buildato e compilato senza nessun problema, mostrando anche l'output del modulo wasm
-![Screenshot della guida ufficiale di OCRE](output_linux.png)
+![Screenshot della guida ufficiale di OCRE](images/output_linux.png)
 
 Successivmaente, ho provato ad eseguire il target Zephyr ( quello da noi interessato ):
 
@@ -274,7 +274,7 @@ Il funzionamento si basa su tre componenti chiave del nostro sistema che interag
 
 Nello specifico abbiamo un architettura del genere: 
 
-![Architettura](architettura.png)
+![Architettura](images/architettura.png)
 
 ### Il ruolo di WAMR (Il motore)
 WAMR è il middleware che rende possibile l'esecuzzione del codice. In particolare, è una macchina virtuale progettata specificamente per dispositivi embedded con risorse limitate.
