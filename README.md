@@ -308,4 +308,28 @@ Nello specifico abbiamo un architettura del genere:
 └───────────────────────────────────────────────────┘
 ```
 
+graph TD
+    subgraph "Guest Space (User Land)"
+        A[<b>Applicazione Guest (C)</b><br/>Logica Drone .wasm]
+    end
+    
+    subgraph "Interface Layer"
+        B[<b>WASI</b><br/>System Interface Standard]
+    end
+    
+    subgraph "Host Space (System Land)"
+        C[<b>WAMR</b><br/>WebAssembly Micro Runtime]
+        D[<b>Zephyr RTOS</b><br/>Kernel & Drivers]
+        E[<b>Hardware</b><br/>MCU / Native Sim]
+    end
 
+    A -->|Syscall (printf, ecc)| B
+    B -->|Traduzione| C
+    C -->|Esecuzione| D
+    D -->|Controllo| E
+    
+    style A fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style B fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    style C fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style E fill:#eeeeee,stroke:#616161,stroke-width:2px
