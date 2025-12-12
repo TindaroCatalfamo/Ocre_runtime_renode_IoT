@@ -255,8 +255,38 @@ COMMAND xxd -i ${OCRE_INPUT_FILE} | sed 's/unsigned char .*\\[/static const unsi
 - Zephyr RTOS: https://zephyrproject.org  
 - OCRE docs: https://docs.project-ocre.org  
 
----
-
 ### Consigli
 - passare il modulo wasm tramite percorso assoluto nel comando di build.sh 
 - se l'installazione di OCRE e delle librerie per farlo funzionare sono state fatte tramite venv python, ricordatevi di attivarlo prima dell'esecuzione del comando ./build.sh ...
+---
+
+
+##WAMR su Zephyr RTOS 
+Essendo che OCRE è ancora in fase di sviluppo, abbiamo fatto un piccolo cambio di target. L'idea è quella di usare WAMR come motore di un modulo wasm su Zephyr, e questo è assolutamente possibile.
+
+Andiamo a vedere un pò come funziona.
+
+###Architettura del sistema
+Il funzionamento si basa su tre componenti chiave del nostro sistema che interagiscono verticalmente: 
+- WAMR (WebAssembly Micro Runtime)
+- WASI (System Interface)
+- Zephyr RTOS
+
+Nello specifico abbiamo un architettura del genere: 
+
++---------------------------------------------------+
+|               Applicazione Guest (C)              |  <-- Il tuo drone.c
+|           (Compilata in WebAssembly - .wasm)      |
++---------------------------------------------------+
+|             WASI (System Interface)               |  <-- Standard per le Syscall
++---------------------------------------------------+
+|        WAMR (WebAssembly Micro Runtime)           |  <-- La Virtual Machine
++---------------------------------------------------+
+|               Zephyr RTOS (Host)                  |  <-- Il Sistema Operativo
++---------------------------------------------------+
+|                 Hardware (MCU/Sim)                |
++---------------------------------------------------+
+
+
+
+
