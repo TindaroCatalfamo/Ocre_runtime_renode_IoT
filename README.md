@@ -176,15 +176,15 @@ Nel repository ufficiale di OCRE, viene presentato lo script build.sh, che serve
 
 Vediamo nello specifico cosa fa build.sh su Zephyr (tutte le porve sono fatte su native_sim) 
 
-1 - Prende il primo file .wasm passato come input
+1. Prende il primo file .wasm passato come input
 
-2 - Lo converte in un array C (blob binario)
+2. Lo converte in un array C (blob binario)
 
-3 - Lo include nel firmware come costante (.rodata)
+3. Lo include nel firmware come costante (.rodata)
 
-4 - Lo linka dentro zephyr.exe / zephyr.elf
+4. Lo linka dentro zephyr.exe / zephyr.elf
 
-5 - A runtime:
+5. A runtime:
 
 - Zephyr avvia il sistema
 
