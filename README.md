@@ -261,12 +261,12 @@ COMMAND xxd -i ${OCRE_INPUT_FILE} | sed 's/unsigned char .*\\[/static const unsi
 ---
 
 
-## WAMR su Zephyr RTOS 
+# WAMR su Zephyr RTOS 
 Essendo che OCRE è ancora in fase di sviluppo, abbiamo fatto un piccolo cambio di target. L'idea è quella di usare WAMR come motore di un modulo wasm su Zephyr, e questo è assolutamente possibile.
 
 Andiamo a vedere un pò come funziona.
 
-### Architettura del sistema
+## Architettura del sistema
 Il funzionamento si basa su tre componenti chiave del nostro sistema che interagiscono verticalmente: 
 - WAMR (WebAssembly Micro Runtime)
 - WASI (System Interface)
@@ -274,62 +274,31 @@ Il funzionamento si basa su tre componenti chiave del nostro sistema che interag
 
 Nello specifico abbiamo un architettura del genere: 
 
-```text
-┌───────────────────────────────────────────────────┐
-│              Applicazione Guest (C)               │
-│          (Logica Drone - File .wasm)              │
-└─────────────────────────┬─────────────────────────┘
-                          │
-            Interazione tramite WASI
-                          ▼
-┌───────────────────────────────────────────────────┐
-│            WASI (System Interface)                │
-│          (Standard per le System Call)            │
-└─────────────────────────┬─────────────────────────┘
-                          │
-             Interpretazione Bytecode
-                          ▼
-┌───────────────────────────────────────────────────┐
-│        WAMR (WebAssembly Micro Runtime)           │
-│         (Virtual Machine dentro Zephyr)           │
-└─────────────────────────┬─────────────────────────┘
-                          │
-               Gestione Risorse/Driver
-                          ▼
-┌───────────────────────────────────────────────────┐
-│                Zephyr RTOS (Host)                 │
-│               (Sistema Operativo)                 │
-└─────────────────────────┬─────────────────────────┘
-                          │
-              Esecuzione Fisica
-                          ▼
-┌───────────────────────────────────────────────────┐
-│                Hardware (MCU/Sim)                 │
-└───────────────────────────────────────────────────┘
-```
+![Architettura](architettura.png)
 
-graph TD
-    subgraph "Guest Space (User Land)"
-        A[<b>Applicazione Guest (C)</b><br/>Logica Drone .wasm]
-    end
-    
-    subgraph "Interface Layer"
-        B[<b>WASI</b><br/>System Interface Standard]
-    end
-    
-    subgraph "Host Space (System Land)"
-        C[<b>WAMR</b><br/>WebAssembly Micro Runtime]
-        D[<b>Zephyr RTOS</b><br/>Kernel & Drivers]
-        E[<b>Hardware</b><br/>MCU / Native Sim]
-    end
+### Il ruolo di WAMR (Il motore)
+WAMR è il middleware che rende possibile l'esecuzzione del codice. In particolare, è una macchina virtuale progettata specificamente per dispositivi embedded con risorse limitate.
 
-    A -->|Syscall (printf, ecc)| B
-    B -->|Traduzione| C
-    C -->|Esecuzione| D
-    D -->|Controllo| E
-    
-    style A fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    style B fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
-    style C fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    style E fill:#eeeeee,stroke:#616161,stroke-width:2px
+WAMR viene compilato dentro Zephyr. All'avvio, Zephyr inizializza WAMR, che a sua volta alloca un blocco di memoria per caricare  ed eseguire il bytecode .wasm. Nel nostro caso, funziona agisce come interprete, leggendo le istruzioni binarie del modulo WASM e traducendole in istruzioni macchina per la CPU host
+
+### Il ruolo di WASI (Il ponte)
+Qui entriamo nella parte più critica dell'interazione. WebAssembly, per design, non ha accesso all'esterno, nel senso che è una scatola chiusa (Sandbox), quindi non può leggere file, non può stampare a schermo ( es. printf) non può leggere sensori. 
+
+WASI è lo standard che risolve questo problema, fornendo un set di API standardizzate per permettere al moudlo WASM di parlare con il sistema operativo sottostante in modo sicuro.
+
+Andiamo a fare l'esempio di un flusso di chiamata per la funzione printf:
+
+1. Guest (WASM): Chiama la funzione printf("Hello")
+2. Compilatore (WASI-SDK): Traduce la funzione printf in una chiamata di sistema WASI chiamata fd_write
+3. Runtime (WAMR): Intercetta la chiamata fd_write proveniente dal modulo WASM.
+4. Host (Zephyr): WAMR mappa fd_write sulla funzione nativa di Zephyr
+5. Risultato: La stringa appare sulla console di Zephyr.
+
+### Il ruolo di Zephyr (Sistema Host)
+Infine, troviamo Zephyr giocando il ruolo "orchestratore di risorse":
+
+- Fornisce le primitive di sistema (Thread, Timer, Memoria).
+
+- Include le librerie native C di WAMR come un modulo esterno.
+
+- Carica il modulo WASM (nel nostro caso, tramite un header C test_wasm.h che contiene il bytecode esadecimale) e lo passa al runtime per l'esecuzione.
