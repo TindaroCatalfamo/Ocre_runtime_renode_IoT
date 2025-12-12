@@ -274,7 +274,7 @@ Il funzionamento si basa su tre componenti chiave del nostro sistema che interag
 
 Nello specifico abbiamo un architettura del genere: 
 
-
+```text
 ┌───────────────────────────────────────────────────┐
 │              Applicazione Guest (C)               │
 │          (Logica Drone - File .wasm)              │
@@ -306,6 +306,6 @@ Nello specifico abbiamo un architettura del genere:
 ┌───────────────────────────────────────────────────┐
 │                Hardware (MCU/Sim)                 │
 └───────────────────────────────────────────────────┘
-
+```
 
 
