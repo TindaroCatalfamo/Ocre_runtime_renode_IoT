@@ -261,12 +261,12 @@ COMMAND xxd -i ${OCRE_INPUT_FILE} | sed 's/unsigned char .*\\[/static const unsi
 ---
 
 
-##WAMR su Zephyr RTOS 
+## WAMR su Zephyr RTOS 
 Essendo che OCRE è ancora in fase di sviluppo, abbiamo fatto un piccolo cambio di target. L'idea è quella di usare WAMR come motore di un modulo wasm su Zephyr, e questo è assolutamente possibile.
 
 Andiamo a vedere un pò come funziona.
 
-###Architettura del sistema
+### Architettura del sistema
 Il funzionamento si basa su tre componenti chiave del nostro sistema che interagiscono verticalmente: 
 - WAMR (WebAssembly Micro Runtime)
 - WASI (System Interface)
@@ -274,19 +274,38 @@ Il funzionamento si basa su tre componenti chiave del nostro sistema che interag
 
 Nello specifico abbiamo un architettura del genere: 
 
-+---------------------------------------------------+
-|               Applicazione Guest (C)              |  <-- Il tuo drone.c
-|           (Compilata in WebAssembly - .wasm)      |
-+---------------------------------------------------+
-|             WASI (System Interface)               |  <-- Standard per le Syscall
-+---------------------------------------------------+
-|        WAMR (WebAssembly Micro Runtime)           |  <-- La Virtual Machine
-+---------------------------------------------------+
-|               Zephyr RTOS (Host)                  |  <-- Il Sistema Operativo
-+---------------------------------------------------+
-|                 Hardware (MCU/Sim)                |
-+---------------------------------------------------+
 
+┌───────────────────────────────────────────────────┐
+│              Applicazione Guest (C)               │
+│          (Logica Drone - File .wasm)              │
+└─────────────────────────┬─────────────────────────┘
+                          │
+            Interazione tramite WASI
+                          ▼
+┌───────────────────────────────────────────────────┐
+│            WASI (System Interface)                │
+│          (Standard per le System Call)            │
+└─────────────────────────┬─────────────────────────┘
+                          │
+             Interpretazione Bytecode
+                          ▼
+┌───────────────────────────────────────────────────┐
+│        WAMR (WebAssembly Micro Runtime)           │
+│         (Virtual Machine dentro Zephyr)           │
+└─────────────────────────┬─────────────────────────┘
+                          │
+               Gestione Risorse/Driver
+                          ▼
+┌───────────────────────────────────────────────────┐
+│                Zephyr RTOS (Host)                 │
+│               (Sistema Operativo)                 │
+└─────────────────────────┬─────────────────────────┘
+                          │
+              Esecuzione Fisica
+                          ▼
+┌───────────────────────────────────────────────────┐
+│                Hardware (MCU/Sim)                 │
+└───────────────────────────────────────────────────┘
 
 
 
