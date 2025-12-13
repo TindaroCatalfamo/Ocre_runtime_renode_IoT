@@ -62,7 +62,7 @@ Verifica stato:
 ip addr show tap0
 ```
 
-### Configurazione in Renode (.repl)
+### Configurazione in Renode
 
 Nel file `.resc` personalizzato ho definito:
 
