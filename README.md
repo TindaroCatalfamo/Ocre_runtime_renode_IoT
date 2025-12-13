@@ -372,9 +372,9 @@ Lo script build.sh serve per aggiornare la logica (flashare un nuovo programma).
 Una volta eseguito, il modulo WASM è permanentemente integrato nella build corrente di Zephyr. Se chiudi il simulatore e vuoi rieseguire lo stesso programma senza ricompilarlo da zero, non serve lanciare di nuovo build.sh.
 
 Puoi semplicemente andare nella cartella di Zephyr ed eseguire il run diretto:
-
+```bash
 cd ~/wasm-micro-runtime/product-mini/platforms/zephyr/simple
 west build -b native_sim -t run
-
+```
 
 
