@@ -303,6 +303,8 @@ Infine, troviamo Zephyr giocando il ruolo "orchestratore di risorse":
 
 - Carica il modulo WASM (nel nostro caso, tramite un header C test_wasm.h che contiene il bytecode esadecimale) e lo passa al runtime per l'esecuzione.
 
+---
+
 ## Installazione, configurazione ed esecuzione
 Questa sezione descrive come configurare l'ambiente di sviluppo e come compilare ed eseguire i propri moduli WASM personalizzati su Zephyr
 
@@ -344,8 +346,23 @@ CONFIG_PICOLIBC=y
 # In quel caso aggiungere direttamente la nuova configurazione
 ```
 
+Infine, è importante attivare l'ambiente Zephyr ogni volta che inizia una sessione di lavoro nuova: 
 
+```bash
+source ~/zephyrproject/.venv/bin/activate
+source ~/zephyrproject/zephyr/zephyr-env.sh
+```
+### Build ed esecuzione di un modulo WASM custom
 
+Per semplificare il porcesso ho creato una cartella dedicata custom e uno script di automazione personalizzato, basato sull'esempio originale offerto da WAMR nella cartella ~/wasm-micro-runtime/product-mini/app-samples/hello-world/build.sh
 
+Posizione dello script personalizzato: ~/wasm-micro-runtime/product-mini/app-samples/custom/build.sh
 
+Il funzionamento è immediato. Nella stessa cartella dello script, è sufficiente posizionare il file sorgente .c che si desidera eseguire, successivamente eseguire il comando: 
+
+```bash
+./build.sh nome_file.c
+# Esempio: ./build.sh drone.c
+```
+Nella cartella custom è presente un readME in cui viene spiegata la logica di funzionamento del file build.sh
 
