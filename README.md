@@ -302,3 +302,50 @@ Infine, troviamo Zephyr giocando il ruolo "orchestratore di risorse":
 - Include le librerie native C di WAMR come un modulo esterno.
 
 - Carica il modulo WASM (nel nostro caso, tramite un header C test_wasm.h che contiene il bytecode esadecimale) e lo passa al runtime per l'esecuzione.
+
+## Installazione, configurazione ed esecuzione
+Questa sezione descrive come configurare l'ambiente di sviluppo e come compilare ed eseguire i propri moduli WASM personalizzati su Zephyr
+
+### Prerequisiti ed installazione
+Prima di iniziare, assicurati di aver scaricato le seguenti risorse:
+- Zephyr RTOS & SDK: Installati seguendo la guida ufficiale Zephyr.
+
+- WAMR (WebAssembly Micro Runtime): Clonare il repository ufficiale GitHub.
+
+- WASI SDK (Ver. 20.0): Scaricare ed estrarre l'SDK per la compilazione dei moduli WASM.
+
+### Configurazione dell'ambiente
+Una volta aver installato correttamente le risorse necessarie possiamo proseguire con la configurazione del nostro ambiente di lavoro. Per permettere agli script di trovare il compilatore WASM, è necessario impostare la variabile d'ambiente WASI_SDK_PATH in modo permanente, eseguendo questi comadni nel terminale:
+
+```bash
+# 1. Aggiungi il percorso al file di configurazione
+echo 'export WASI_SDK_PATH=~/wasi-sdk-20.0' >> ~/.bashrc
+
+# 2. Ricarica la configurazione corrente
+source ~/.bashrc
+
+# 3. Verifica (deve stampare il percorso corretto, tipo /home/tuo_nome/wasi-sdk-20.0)
+echo $WASI_SDK_PATH
+```
+
+Per garantire la compatibilità tra le versioni recenti di Zephyr e WAMR, è necessario modificare la configurazione della libreria C Standard.
+
+Apri il file prj.conf situato in ~/wasm-micro-runtime/product-mini/platforms/zephyr/simple/prj.conf e applica le seguenti modifiche: 
+
+```conf
+# 1. Se è presente questa configurazione, rimuovila o commentala come vedi qui
+# CONFIG_MINIMAL_LIBC=y
+
+# 2. Infine, aggiungi la nuova configurazione
+CONFIG_MINIMAL_LIBC=n
+CONFIG_PICOLIBC=y
+
+# ATTENZIONE: Non sempre la CONFIG_MINIMAL_LIBC=y è presente,
+# In quel caso aggiungere direttamente la nuova configurazione
+```
+
+
+
+
+
+
