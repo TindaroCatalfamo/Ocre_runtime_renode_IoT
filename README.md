@@ -215,7 +215,7 @@ Il file viene buildato e compilato senza nessun problema, mostrando anche l'outp
 Successivmaente, ho provato ad eseguire il target Zephyr ( quello da noi interessato ):
 
 ```bash
-./build.sh -t l -r -f /home/tindaro/getting-started/samples/sensor_polling/build/sensor_polling.wasm
+./build.sh -t z -r -f /home/tindaro/getting-started/samples/sensor_polling/build/sensor_polling.wasm
 ```
 La build si ferma con il seguente errore: 
 ```bash
