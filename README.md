@@ -284,7 +284,7 @@ WAMR viene compilato dentro Zephyr. All'avvio, Zephyr inizializza WAMR, che a su
 ### Il ruolo di WASI (Il ponte)
 Qui entriamo nella parte più critica dell'interazione. WebAssembly, per design, non ha accesso all'esterno, nel senso che è una scatola chiusa (Sandbox), quindi non può leggere file, non può stampare a schermo ( es. printf) non può leggere sensori. 
 
-WASI è lo standard che risolve questo problema, fornendo un set di API standardizzate per permettere al moudlo WASM di parlare con il sistema operativo sottostante in modo sicuro.
+WASI è lo standard che risolve questo problema, fornendo un set di API standardizzate per permettere al modulo WASM di parlare con il sistema operativo sottostante in modo sicuro.
 
 Andiamo a fare l'esempio di un flusso di chiamata per la funzione printf:
 
@@ -317,7 +317,7 @@ Prima di iniziare, assicurati di aver scaricato le seguenti risorse:
 - WASI SDK (Ver. 20.0): Scaricare ed estrarre l'SDK per la compilazione dei moduli WASM.
 
 ### Configurazione dell'ambiente
-Una volta aver installato correttamente le risorse necessarie possiamo proseguire con la configurazione del nostro ambiente di lavoro. Per permettere agli script di trovare il compilatore WASM, è necessario impostare la variabile d'ambiente WASI_SDK_PATH in modo permanente, eseguendo questi comadni nel terminale:
+Una volta aver installato correttamente le risorse necessarie possiamo proseguire con la configurazione del nostro ambiente di lavoro. Per permettere agli script di trovare il compilatore WASM, è necessario impostare la variabile d'ambiente WASI_SDK_PATH in modo permanente, eseguendo questi comandi nel terminale:
 
 ```bash
 # 1. Aggiungi il percorso al file di configurazione
